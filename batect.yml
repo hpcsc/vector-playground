@@ -1,0 +1,34 @@
+project_name: vector-playground
+
+containers:
+  agent-1:
+    image: timberio/vector:0.22.X-debian
+    ports:
+      - 18686:8686
+    volumes:
+      - ./config/agent.toml:/etc/vector/vector.toml:ro
+      - ./logs/agent-1:/var/log/vector
+
+  agent-2:
+    image: timberio/vector:0.22.X-debian
+    ports:
+      - 28686:8686
+    volumes:
+      - ./config/agent.toml:/etc/vector/vector.toml:ro
+      - ./logs/agent-2:/var/log/vector
+
+  aggregator:
+    image: timberio/vector:0.22.X-debian
+    ports:
+      - 38686:8686
+    volumes:
+      - ./config/aggregator.toml:/etc/vector/vector.toml:ro
+      - ./logs/aggregator:/var/log/vector
+
+tasks:
+  run:
+    dependencies:
+      - agent-1
+      - agent-2
+    run:
+      container: aggregator

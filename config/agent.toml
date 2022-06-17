@@ -1,0 +1,36 @@
+[api]
+enabled = true
+address = "0.0.0.0:8686"
+
+[sources.demo_logs]
+type = "demo_logs"
+format = "json"
+
+[transforms.add_agent_hostname]
+type = "remap"
+inputs = [ "demo_logs" ]
+source = """
+. = parse_json!(.message)
+.agent_hostname = get_env_var!("HOSTNAME")
+"""
+
+[sources.host_metrics]
+type = "host_metrics"
+collectors = [ "cgroups" ]
+scrape_interval_secs = 15
+
+[sinks.file_sink]
+type = "file"
+inputs = [ "add_agent_hostname", "host_metrics" ]
+compression = "none"
+
+path = "/var/log/vector/%Y-%m-%d.log"
+
+    [sinks.file_sink.encoding]
+    codec = "json"
+
+[sinks.aggregator]
+type = "vector"
+inputs = [ "add_agent_hostname", "host_metrics" ]
+address = "aggregator:6000"
+version = "1"

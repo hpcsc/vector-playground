@@ -1,0 +1,14 @@
+[sources.aggregate_vector]
+type = "vector"
+address = "0.0.0.0:6000"
+version = "1"
+
+[sinks.file_sink]
+type = "file"
+inputs = [ "aggregate_vector" ]
+compression = "none"
+
+path = "/var/log/vector/%Y-%m-%d.log"
+
+    [sinks.file_sink.encoding]
+    codec = "json"
