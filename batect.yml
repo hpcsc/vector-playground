@@ -25,6 +25,11 @@ containers:
       - ./config/aggregator.toml:/etc/vector/vector.toml:ro
       - ./logs/aggregator:/var/log/vector
 
+  test-env:
+    image: timberio/vector:0.22.X-debian
+    volumes:
+      - ./config:/etc/vector
+
 tasks:
   run:
     dependencies:
@@ -32,3 +37,8 @@ tasks:
       - agent-2
     run:
       container: aggregator
+
+  test:
+    run:
+      container: test-env
+      command: test -C /etc/vector
