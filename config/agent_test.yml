@@ -1,0 +1,15 @@
+tests:
+- name: add host name to log output
+  inputs:
+  - insert_at: add_agent_hostname
+    type: log
+    log_fields:
+      message: '{"bytes":6301,"host":"127.0.0.1","method":"GET"}'
+
+  outputs:
+  - extract_from: add_agent_hostname
+    conditions:
+    - type: "vrl"
+      source: |
+        assert!(exists(.agent_hostname))
+        assert_eq!(.agent_hostname, "test-env")
